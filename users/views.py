@@ -74,7 +74,7 @@ def generate_new_password(request):
     request.user.set_password(new_password)
     request.user.save()
     send_mail_password(request.user.email, new_password)
-    return redirect(reverse('catalog:index_main'))
+    return redirect(reverse('users:base'))
 
 
 

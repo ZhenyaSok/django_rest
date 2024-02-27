@@ -5,7 +5,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         user = User.objects.create(
-            email='kapitan_kub@mail.ru',
+            email='zhenyapaiton@yandex.ru',
             first_name='Admin_main',
             last_name='Custom',
             is_superuser=True,

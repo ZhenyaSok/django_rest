@@ -1,17 +1,19 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
 
-from catalog.models import NULLABLE
+NULLABLE = {'null':True, 'blank':True}
 
-
+'''
+Пользователь: все поля от обычного пользователя, 
+но авторизацию заменить на email; телефон; город; аватарка. 
+Модель пользователя разместите в приложении users'''
 class User(AbstractUser):
     username = None
     email = models.EmailField(unique=True, verbose_name='Email')
 
     phone = models.CharField(max_length=35, verbose_name='номер телефона', **NULLABLE)
-    telegram = models.CharField(max_length=150, verbose_name='телеграм пользователя', **NULLABLE)
     avatar = models.ImageField(upload_to='users/', verbose_name='аватар', **NULLABLE)
-    country = models.CharField(max_length=50, verbose_name='страна', **NULLABLE)
+    city = models.CharField(max_length=50, verbose_name='город', **NULLABLE)
 
     email_verify = models.BooleanField(default=False, verbose_name='проверка почты')
 
