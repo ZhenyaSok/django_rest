@@ -34,7 +34,7 @@ class Subject(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE, verbose_name='администратор')
 
     def __str__(self):
-        return f'{self.name} {self.description}'
+        return f'{self.title} {self.description}'
 
     class Meta:
         verbose_name = 'урок'
