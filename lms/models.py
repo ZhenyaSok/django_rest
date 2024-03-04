@@ -30,8 +30,8 @@ class Subject(models.Model):
     description = models.TextField(verbose_name='описание предмета', **NULLABLE)
     preview = models.ImageField(verbose_name='картинка', **NULLABLE)
     link = models.URLField(max_length=190, verbose_name='ссылка на видео', **NULLABLE)
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='курс')
-    owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE, verbose_name='администратор')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='курс', **NULLABLE)
+
 
     def __str__(self):
         return f'{self.title} {self.description}'

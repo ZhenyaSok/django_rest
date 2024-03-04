@@ -3,5 +3,5 @@ from django.apps import AppConfig
 
 class ImsConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'ims'
+    name = 'lms'
     verbose_name = 'курс, предметы'
