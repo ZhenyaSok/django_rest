@@ -7,16 +7,26 @@ from django.contrib.auth.views import LogoutView as BaseLogoutView
 from django.urls import reverse_lazy, reverse
 from django.views.generic import CreateView, UpdateView, TemplateView
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
+from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework import generics
+from rest_framework.filters import OrderingFilter
 
 from users.forms import UserRegisterForm, UserForm
-from users.models import User
+from users.models import User, Payment
 from django.utils.encoding import force_bytes
 from django.views import View
 from django.contrib.auth import login
 from django.contrib.auth.views import PasswordResetDoneView
+from rest_framework.viewsets import ModelViewSet
 
+from users.serializers import PaymentSerializer
 from users.services import send_mail_password, send_mail_ready
 
+class PaymentListApiView(generics.ListAPIView):
+    serializer_class = PaymentSerializer
+    queryset = Payment.objects.all()
+    filter_backends = [DjangoFilterBackend, OrderingFilter]
+    filterset_fields = ('date_pay', 'paid_subject', 'paid_course', 'payment_method')
 
 class LoginView(BaseLoginView):
     template_name = 'users/login.html'

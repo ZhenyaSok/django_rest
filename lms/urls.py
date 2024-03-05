@@ -11,6 +11,7 @@ app_name = ImsConfig.name
 router = DefaultRouter()
 router.register(r'course', CourseViewSet, basename='course')
 
+
 urlpatterns = [
     path('subject/create/', SubjectCreateApiView.as_view(), name='subject_create'),
     path('subject/list/', SubjectListApiView.as_view(), name='subject_list'),

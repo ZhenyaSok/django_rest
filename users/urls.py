@@ -20,4 +20,7 @@ urlpatterns = [
     path('email_confirmed/', UserConfirmView.as_view(), name='email_confirmed'),
     path('email_info_failed/', UserConfirmFailView.as_view(), name='email_info_failed'),
     path('email_senting/', UserConfirmSentView.as_view(), name='email_senting'),
+
+    path('payment/', PaymentListAPIView.as_view(), name='payment'),
+
 ]
