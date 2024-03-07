@@ -27,6 +27,7 @@ class PaymentListApiView(generics.ListAPIView):
     queryset = Payment.objects.all()
     filter_backends = [DjangoFilterBackend, OrderingFilter]
     filterset_fields = ('date_pay', 'paid_subject', 'paid_course', 'payment_method')
+    ordering_fields = ('date_pay',)
 
 class LoginView(BaseLoginView):
     template_name = 'users/login.html'

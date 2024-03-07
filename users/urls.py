@@ -2,9 +2,10 @@ from django.urls import path
 
 from users.apps import UsersConfig
 from users.views import LoginView, LogoutView, RegisterView, UserUpdateView, generate_new_password, \
-    UserConfirmEmailView, UserConfirmView, UserConfirmFailView, UserConfirmSentView
+    UserConfirmEmailView, UserConfirmView, UserConfirmFailView, UserConfirmSentView, PaymentListApiView
 
 app_name = UsersConfig.name
+
 
 
 
@@ -21,6 +22,6 @@ urlpatterns = [
     path('email_info_failed/', UserConfirmFailView.as_view(), name='email_info_failed'),
     path('email_senting/', UserConfirmSentView.as_view(), name='email_senting'),
 
-    path('payment/', PaymentListAPIView.as_view(), name='payment'),
+    path('payment/', PaymentListApiView.as_view(), name='payment'),
 
 ]
