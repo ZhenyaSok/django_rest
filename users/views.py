@@ -67,27 +67,12 @@ class UserUpdateView(UpdateView):
         return self.request.user
 
 
-# def generate_new_password(request):
-#     new_password = ''.join([str(random.randint(0, 9)) for _ in range(12)])
-#     send_mail(
-#         subject='Вы сменили пароль',
-#         message=f'Ваш пароль: {new_password}!',
-#         from_email=settings.EMAIL_HOST_USER,
-#         recipient_list=[request.user.email]
-#     )
-#     request.user.set_password(new_password)
-#     request.user.save()
-#     return redirect(reverse('catalog:index_main'))
-
-
 def generate_new_password(request):
     new_password = ''.join([str(random.randint(0, 9)) for _ in range(12)])
     request.user.set_password(new_password)
     request.user.save()
     send_mail_password(request.user.email, new_password)
     return redirect(reverse('users:base'))
-
-
 
 
 class UserConfirmEmailView(View):
