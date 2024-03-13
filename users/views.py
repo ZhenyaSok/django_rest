@@ -44,5 +44,5 @@ class UserUpdateAPIView(generics.UpdateAPIView):
 
 class UserDeleteAPIView(generics.DestroyAPIView):
     queryset = User.objects.all()
-    permission_classes = [IsOwner, IsModerator]
+    permission_classes = [IsAuthenticated, IsOwner|IsModerator]
 
