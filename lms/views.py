@@ -21,7 +21,7 @@ class CourseViewSet(ModelViewSet):
 
 class SubjectCreateApiView(generics.CreateAPIView):
     serializer_class = SubjectSerializer
-    permission_classes = [IsAuthenticated]
+    # permission_classes = [IsAuthenticated]
 
     def perform_create(self, serializer):
         new_subject = serializer.save()
@@ -31,7 +31,7 @@ class SubjectCreateApiView(generics.CreateAPIView):
 class SubjectListApiView(generics.ListAPIView):
     serializer_class = SubjectSerializer
     queryset = Subject.objects.all()
-    permission_classes = [IsAuthenticated, IsOwner|IsModerator]
+    # permission_classes = [IsAuthenticated, IsOwner|IsModerator]
 
 class SubjectRetrieveApiView(generics.RetrieveAPIView):
     serializer_class = SubjectSerializer

@@ -3,6 +3,7 @@ from rest_framework.fields import IntegerField
 from rest_framework.relations import SlugRelatedField
 
 from lms.models import Course, Subject
+from lms.validators import validator_scam_url
 
 
 class CourseListSerializer(serializers.ModelSerializer):
@@ -25,6 +26,8 @@ class CourseListSerializer(serializers.ModelSerializer):
 
 
 class SubjectSerializer(serializers.ModelSerializer):
+    link = serializers.URLField(validators=[validator_scam_url])
     class Meta:
         model = Subject
-        fields = '__all__'
+        fields = ('id', 'title', 'description', 'link', 'course')
+
