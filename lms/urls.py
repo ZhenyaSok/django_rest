@@ -4,12 +4,13 @@ from lms.apps import ImsConfig
 from rest_framework.routers import DefaultRouter
 
 from lms.views import CourseViewSet, SubjectCreateApiView, SubjectListApiView, SubjectRetrieveApiView, \
-    SubjectUpdateApiView, SubjectDeleteApiView
+    SubjectUpdateApiView, SubjectDeleteApiView, SubscribeViewSet
 
 app_name = ImsConfig.name
 
 router = DefaultRouter()
 router.register(r'course', CourseViewSet, basename='course')
+router.register(r'subscribe', SubscribeViewSet, basename='subscribe')
 
 
 urlpatterns = [
