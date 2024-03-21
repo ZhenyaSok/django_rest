@@ -2,6 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import generics
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.viewsets import ModelViewSet
 
 from users.models import User, Payment
 
@@ -45,4 +46,7 @@ class UserUpdateAPIView(generics.UpdateAPIView):
 class UserDeleteAPIView(generics.DestroyAPIView):
     queryset = User.objects.all()
     permission_classes = [IsAuthenticated, IsOwner|IsModerator]
+
+
+
 

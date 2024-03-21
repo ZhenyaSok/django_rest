@@ -1,9 +1,36 @@
 from rest_framework.decorators import permission_classes
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.viewsets import ModelViewSet, generics
-from lms.models import Course, Subject
+from lms.models import Course, Subject, Subscribe
 from lms.permissions import IsModerator, IsOwner
-from lms.serializers import CourseListSerializer, SubjectSerializer
+from lms.serializers import CourseListSerializer, SubjectSerializer, SubscribeSerializer
+
+
+class SubscribeViewSet(ModelViewSet):
+    serializer_class = SubscribeSerializer
+    queryset = Subscribe.objects.all()
+
+    def post(self, *args, **kwargs):
+        '''
+        def post(self, *args, **kwargs):
+    user = получаем пользователя из self.requests
+    course_id = получаем id курса из self.reqests.data
+    course_item = получаем объект курса из базы с помощью get_object_or_404
+
+    subs_item = получаем объекты подписок по текущему пользователю и курса
+
+		# Если подписка у пользователя на этот курс есть - удаляем ее
+    if subs_item.exists():
+        ...
+        message = 'подписка удалена'
+		# Если подписки у пользователя на этот курс нет - создаем ее
+    else:
+        ...
+        message = 'подписка добавлена'
+		# Возвращаем ответ в API
+    return Response({"message": message})
+        '''
+        pass
 
 
 class CourseViewSet(ModelViewSet):

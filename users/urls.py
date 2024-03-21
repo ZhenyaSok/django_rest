@@ -1,4 +1,5 @@
 from django.urls import path
+from rest_framework.routers import DefaultRouter
 
 from users.apps import UsersConfig
 from users.views import PaymentListApiView, UserCreateAPIView, UserListAPIView, UserUpdateAPIView, UserDeleteAPIView, \
@@ -13,14 +14,7 @@ from rest_framework_simplejwt.views import (
 app_name = UsersConfig.name
 
 
-
-
-
 urlpatterns = [
-    # path('', LoginView.as_view(), name='login'),
-    # path('logout/', LogoutView.as_view(), name='logout'),
-    # path('register/', RegisterView.as_view(), name='register'),
-    # path('profile/', UserUpdateView.as_view(), name='profile'),
 
     path('create/', UserCreateAPIView.as_view(), name='create'),
     path('list/', UserListAPIView.as_view(), name='list'),
