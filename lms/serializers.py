@@ -1,13 +1,23 @@
 from rest_framework import serializers
-from rest_framework.fields import IntegerField
-from rest_framework.relations import SlugRelatedField
-
 from lms.models import Course, Subject, Subscribe
 from lms.validators import validator_scam_url
 
 
+class SubjectSerializer(serializers.ModelSerializer):
 
-class CourseListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subject
+        fields = ('id', 'title', 'description', 'link', 'course')
+        link = serializers.URLField(validators=[validator_scam_url])
+
+
+class SubscribeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Subscribe
+        fields = ('id', 'user', 'course')
+
+
+class CourseSerializer(serializers.ModelSerializer):
     quantity_subject = serializers.SerializerMethodField()
     list_subject = serializers.SerializerMethodField()
     is_subscription = serializers.SerializerMethodField()
@@ -30,19 +40,5 @@ class CourseListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ("title", "list_subject", "description", "quantity_subject")
-
-
-
-class SubjectSerializer(serializers.ModelSerializer):
-    link = serializers.URLField(validators=[validator_scam_url])
-    class Meta:
-        model = Subject
-        fields = ('id', 'title', 'description', 'link', 'course')
-
-
-class SubscribeSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Subscribe
-        fields = ('id', 'user', 'course')
+        fields = ('id', 'title', 'list_subject', 'description', 'quantity_subject', 'is_subscription')
 

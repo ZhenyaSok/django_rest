@@ -13,8 +13,8 @@ class User(AbstractUser):
     """Модель пользователя"""
     username = None
     email = models.EmailField(unique=True, verbose_name='Email')
-    first_name = models.CharField(max_length=50, verbose_name='Имя')
-    last_name = models.CharField(max_length=75, verbose_name='Фамилия')
+    first_name = models.CharField(max_length=50, verbose_name='Имя', **NULLABLE)
+    last_name = models.CharField(max_length=75, verbose_name='Фамилия', **NULLABLE)
     phone = models.CharField(max_length=35, verbose_name='номер телефона', **NULLABLE)
     avatar = models.ImageField(upload_to='users/', verbose_name='аватар', **NULLABLE)
     city = models.CharField(max_length=50, verbose_name='город', **NULLABLE)

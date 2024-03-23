@@ -1,50 +1,60 @@
+from rest_framework import status
+from django.shortcuts import get_object_or_404
 from rest_framework.decorators import permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.response import Response
+from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet, generics
 from lms.models import Course, Subject, Subscribe
+from lms.pagination import PagePagination
 from lms.permissions import IsModerator, IsOwner
-from lms.serializers import CourseListSerializer, SubjectSerializer, SubscribeSerializer
+from lms.serializers import SubjectSerializer, CourseSerializer
 
 
-class SubscribeViewSet(ModelViewSet):
-    serializer_class = SubscribeSerializer
-    queryset = Subscribe.objects.all()
+# class SubscribeViewSet(ModelViewSet):
+#     serializer_class = SubscribeSerializer
+#     queryset = Subscribe.objects.all()
 
-    def post(self, *args, **kwargs):
-        '''
-        def post(self, *args, **kwargs):
-    user = получаем пользователя из self.requests
-    course_id = получаем id курса из self.reqests.data
-    course_item = получаем объект курса из базы с помощью get_object_or_404
+class SubscribeAPIView(APIView):
+    """Механизм для смены флага подписки на курс"""
 
-    subs_item = получаем объекты подписок по текущему пользователю и курса
+    def post(self, request, *args, **kwargs):
+        """Реализация задания через post метод"""
+        user = request.user
+        course_id = request.data.get("course_id")
+        course_item = get_object_or_404(Course, pk=course_id)
 
-		# Если подписка у пользователя на этот курс есть - удаляем ее
-    if subs_item.exists():
-        ...
-        message = 'подписка удалена'
-		# Если подписки у пользователя на этот курс нет - создаем ее
-    else:
-        ...
-        message = 'подписка добавлена'
-		# Возвращаем ответ в API
-    return Response({"message": message})
-        '''
-        pass
+        subs_item = Subscribe.objects.filter(user=user, course=course_item)
 
+        if subs_item.exists():
+            subs_item.delete()
+            message = "Подписка удалена"
+        else:
+            Subscribe.objects.create(user=user, course=course_item)
+            message = "Подписка добавлена"
+
+        return Response({"message": message}, status=status.HTTP_200_OK)
 
 class CourseViewSet(ModelViewSet):
-    serializer_class = CourseListSerializer
+    serializer_class = CourseSerializer
     queryset = Course.objects.all()
+    pagination_class = PagePagination
 
     def get_permissions(self):
         if self.action == 'create':
-            self.permission_classes = [IsAuthenticated]
-        elif self.action == 'retrieve' or 'update' or 'destroy':
-            self.permission_classes = [IsAuthenticated, IsOwner|IsModerator]
-        elif self.action == 'list':
-            self.permission_classes = [IsAuthenticated]
+            permission_classes = [~IsModerator, IsAuthenticated]
+        elif self.action == 'retrieve' or 'list':
+            permission_classes = [IsModerator | IsOwner]
+        elif self.action == 'update' or 'partial_update':
+            permission_classes = [IsModerator | IsOwner]
+        elif self.action == 'destroy':
+            permission_classes = [~IsModerator, IsOwner]
         return [permission() for permission in permission_classes]
+
+    def perform_create(self, serializer):
+        new_course = serializer.save()
+        new_course.owner = self.request.user
+        new_course.save()
 
 class SubjectCreateApiView(generics.CreateAPIView):
     serializer_class = SubjectSerializer
@@ -58,21 +68,22 @@ class SubjectCreateApiView(generics.CreateAPIView):
 class SubjectListApiView(generics.ListAPIView):
     serializer_class = SubjectSerializer
     queryset = Subject.objects.all()
+    pagination_class = PagePagination
     # permission_classes = [IsAuthenticated, IsOwner|IsModerator]
 
 class SubjectRetrieveApiView(generics.RetrieveAPIView):
     serializer_class = SubjectSerializer
     queryset = Subject.objects.all()
-    permission_classes = [IsAuthenticated, IsOwner|IsModerator]
+    # permission_classes = [IsAuthenticated, IsOwner|IsModerator]
 
 class SubjectUpdateApiView(generics.UpdateAPIView):
     serializer_class = SubjectSerializer
     queryset = Subject.objects.all()
-    permission_classes = [IsAuthenticated, IsOwner|IsModerator]
+    # permission_classes = [IsAuthenticated, IsOwner|IsModerator]
 
 class SubjectDeleteApiView(generics.DestroyAPIView):
     queryset = Subject.objects.all()
-    permission_classes = [IsAuthenticated, IsOwner]
+    # permission_classes = [IsAuthenticated, IsOwner]
 
 
 
