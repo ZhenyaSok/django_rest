@@ -1,6 +1,35 @@
 from django.core.mail import send_mail
 from django.conf import settings
-from django.shortcuts import render, redirect
+
+import stripe
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
+def create_stripe_price(payment):
+    stripe_product = stripe.Product.create(
+        name=payment.paid_course.title
+    )
+
+    stripe_price = stripe.Price.create(
+        currency="rub",
+        unit_amount=int(payment.payment_summ)*100,
+        product_data={"name": stripe_product['name']},
+    )
+
+    return stripe_price['id']
+
+
+def create_stripe_session(stripe_price_id):
+    stripe_session = stripe.checkout.Session.create(
+        success_url="http://127.0.0.1:8000/",
+        line_items=[{
+            'price': stripe_price_id,
+            'quantity': 1
+        }],
+        mode='payment',
+    )
+
+    return stripe_session['url']
+
 
 def send_mail_password(new_password, email):
 

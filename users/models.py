@@ -46,8 +46,11 @@ class Payment(models.Model):
     date_pay = models.DateField(auto_now=False, verbose_name="дата оплаты", **NULLABLE)
     paid_course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="оплаченный курс", **NULLABLE)
     paid_subject = models.ForeignKey(Subject, on_delete=models.CASCADE, verbose_name="оплаченный урок", **NULLABLE)
-    payment = models.PositiveIntegerField(verbose_name="сумма оплаты")
+    payment_summ = models.PositiveIntegerField(verbose_name="сумма оплаты")
     payment_method = models.CharField(max_length=85, choices=STATUS_CHOICES, verbose_name="Способ оплаты", **NULLABLE)
+
+    payment_link = models.URLField(max_length=350, verbose_name='ссылка для оплаты', **NULLABLE)
+    payment_id = models.CharField(max_length=255, verbose_name='идентификатор платежа', **NULLABLE)
 
     def __str__(self):
         return f'{self.user_pay} {self.payment} {self.date_pay}'
@@ -56,3 +59,6 @@ class Payment(models.Model):
         verbose_name = 'платеж'
         verbose_name_plural = 'платежи'
         ordering = ['-date_pay',]
+
+
+

@@ -28,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+DOMAIN_NAME = ['http://127.0.0.1:8000']
 # Application definition
 
 INSTALLED_APPS = [
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'drf_yasg',
     'rest_framework',
     'rest_framework_simplejwt',
     'django_filters',
@@ -171,3 +172,8 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
+
+# Stripe
+
+STRIPE_PUBLIC_KEY = "pk_test_51OyWWrRoEJdjRqgtFY9ym6MlQ7orZEi3JNIuLlw9rw3PZdtPzk8CVx6qZxwVSGQDXg3IOjiIoIk18ztjKmeRa0jT00AyMX5JND"
+STRIPE_SECRET_KEY = "sk_test_51OyWWrRoEJdjRqgthkTSLe2rFhsdI4jG0k4rpWMkhZeDaD3M8kxvHSzRXVspkGmP0ObqVUmEddX7pvNjjq653w9700666KFI72"
