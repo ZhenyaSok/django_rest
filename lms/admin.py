@@ -12,7 +12,7 @@ class SubjectListSettingsAdmin(admin.ModelAdmin):
 @admin.register(Course)
 class CourseListSettingsAdmin(admin.ModelAdmin):
     # list_filter = ('title', 'course')
-    list_display = ('pk', 'title', 'description', 'owner', )
+    list_display = ('pk', 'title', 'description', 'owner')
 
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):

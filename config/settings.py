@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.0/ref/settings/
 """
 import os
+from datetime import timedelta
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -27,7 +28,7 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-
+DOMAIN_NAME = ['http://127.0.0.1:8000']
 # Application definition
 
 INSTALLED_APPS = [
@@ -38,7 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    'drf_yasg',
     'rest_framework',
+    'rest_framework_simplejwt',
     'django_filters',
 
     #my_apps
@@ -153,8 +156,24 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 # django-rest framework
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    'PAGE_SIZE': 3
+    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    # 'PAGE_SIZE': 3,
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+}
+
+# Настройки срока действия токенов
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
 }
 
 
+# Stripe
+
+STRIPE_PUBLIC_KEY = "pk_test_51OyWWrRoEJdjRqgtFY9ym6MlQ7orZEi3JNIuLlw9rw3PZdtPzk8CVx6qZxwVSGQDXg3IOjiIoIk18ztjKmeRa0jT00AyMX5JND"
+STRIPE_SECRET_KEY = "sk_test_51OyWWrRoEJdjRqgthkTSLe2rFhsdI4jG0k4rpWMkhZeDaD3M8kxvHSzRXVspkGmP0ObqVUmEddX7pvNjjq653w9700666KFI72"

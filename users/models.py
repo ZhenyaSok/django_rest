@@ -13,7 +13,8 @@ class User(AbstractUser):
     """Модель пользователя"""
     username = None
     email = models.EmailField(unique=True, verbose_name='Email')
-
+    first_name = models.CharField(max_length=50, verbose_name='Имя', **NULLABLE)
+    last_name = models.CharField(max_length=75, verbose_name='Фамилия', **NULLABLE)
     phone = models.CharField(max_length=35, verbose_name='номер телефона', **NULLABLE)
     avatar = models.ImageField(upload_to='users/', verbose_name='аватар', **NULLABLE)
     city = models.CharField(max_length=50, verbose_name='город', **NULLABLE)
@@ -30,26 +31,6 @@ class User(AbstractUser):
         verbose_name = 'пользователь'
         verbose_name_plural = 'пользователи'
 
-"""
-Задание 2
-Добавьте новую модель в приложение users:
-
-Платежи
-
-пользователь,
-дата оплаты,
-оплаченный курс или урок,
-сумма оплаты,
-способ оплаты: наличные или перевод на счет.
-Поля 
-пользователь
-, 
-оплаченный курс
- и 
-отдельно оплаченный урок
- должны быть ссылками на соответствующие модели.
-
-Запишите в таблицу, соответствующую этой модели данные через инструмент фикстур или кастомную команду."""
 
 class Payment(models.Model):
     CASH = 'Наличные'
@@ -61,18 +42,23 @@ class Payment(models.Model):
         (ACCOUNT, "Перевод на счет"),
     ]
 
-
     user_pay = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name="платежеспособный пользователь", **NULLABLE)
     date_pay = models.DateField(auto_now=False, verbose_name="дата оплаты", **NULLABLE)
     paid_course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="оплаченный курс", **NULLABLE)
-    paid_subject = models.ForeignKey(Subject, on_delete=models.CASCADE, verbose_name="оплаченный курс", **NULLABLE)
-    payment = models.PositiveIntegerField(verbose_name="сумма оплаты")
+    paid_subject = models.ForeignKey(Subject, on_delete=models.CASCADE, verbose_name="оплаченный урок", **NULLABLE)
+    payment_summ = models.PositiveIntegerField(verbose_name="сумма оплаты")
     payment_method = models.CharField(max_length=85, choices=STATUS_CHOICES, verbose_name="Способ оплаты", **NULLABLE)
 
+    payment_link = models.URLField(max_length=700, verbose_name='ссылка для оплаты', **NULLABLE)
+    payment_id = models.CharField(max_length=255, verbose_name='идентификатор платежа', **NULLABLE)
+
     def __str__(self):
-        return f'{self.user_pay} {self.payment} {self.date_pay}'
+        return f'{self.user_pay} {self.payment_summ} {self.date_pay}'
 
     class Meta:
         verbose_name = 'платеж'
         verbose_name_plural = 'платежи'
         ordering = ['-date_pay',]
+
+
+

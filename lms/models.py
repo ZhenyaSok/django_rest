@@ -1,6 +1,8 @@
 from django.db import models
 
 from config import settings
+
+
 NULLABLE = {'null':True, 'blank':True}
 
 '''
@@ -16,6 +18,7 @@ class Course(models.Model):
     description = models.TextField(verbose_name='описание предмета', **NULLABLE)
     preview = models.ImageField(verbose_name='картинка', **NULLABLE)
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE, verbose_name='администратор')
+    price = models.PositiveIntegerField(default=0, verbose_name="цена")
 
     def __str__(self):
         return f'{self.title} {self.description}'
@@ -39,3 +42,17 @@ class Subject(models.Model):
     class Meta:
         verbose_name = 'урок'
         verbose_name_plural = 'уроки'
+
+
+class Subscribe(models.Model):
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='пользователь')
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='курс')
+
+
+    def __str__(self):
+        return f'{self.user} - {self.course}'
+
+    class Meta:
+        verbose_name = 'подписка'
+        verbose_name_plural = 'подписки'
+
