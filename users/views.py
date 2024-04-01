@@ -39,12 +39,9 @@ class PaymentCreateAPIView(generics.CreateAPIView):
             raise serializers.ValidationError('Укажите верную цену, должна совпадать с ценой на сайте')
 
         stripe_price_id = create_stripe_price(payment)
-        print(f"PRICE-id{stripe_price_id}")
         payment.payment_link = create_stripe_session(stripe_price_id)
-        # print(f"LINK{payment.payment_link}")
-        # payment.payment_link.rstrip('/').split('/')[-1].split('-')[0]
 
-        # payment.save()
+        payment.save()
 
 
 
