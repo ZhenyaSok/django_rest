@@ -1,9 +1,10 @@
-
+from rest_framework.generics import get_object_or_404
+from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics, serializers
+from rest_framework import generics, serializers, viewsets
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated, AllowAny
-
+from rest_framework.viewsets import ModelViewSet
 
 from config import settings
 from users.models import User, Payment
@@ -21,6 +22,7 @@ class PaymentListApiView(generics.ListAPIView):
     filterset_fields = ('date_pay', 'paid_subject', 'paid_course', 'payment_method')
     ordering_fields = ('date_pay',)
     # permission_classes = [IsAuthenticated]
+
 
 
 class PaymentCreateAPIView(generics.CreateAPIView):
@@ -41,9 +43,45 @@ class PaymentCreateAPIView(generics.CreateAPIView):
         stripe_price_id = create_stripe_price(payment)
         payment.payment_link, payment.payment_id = create_stripe_session(stripe_price_id)
 
-        get_status_payment(payment.payment_id) # информация о статусе платежа, в дальнейшем можно реализовать ее отправку на почту
+        get_status_payment(payment.payment_id)
 
         payment.save()
+
+
+class StatusViewSet(ModelViewSet):
+    queryset = Payment.objects.all()
+
+
+    def retrieve(self, request, pk):
+
+        instance = pk
+        serializer = PaymentSerializer(instance)
+        return Response(serializer.data)
+        # Метод для вывода информации по пользователю с определением выборки из базы и указанием сериализатора
+        # queryset = Payment.objects.all()
+        # payment_pk = stripe.checkout.Session.retrieve(queryset, pk=pk)
+        # payment = get_object_or_404(queryset, pk=pk)
+
+        # return Response(serializer.data)
+
+
+
+
+    # payment_status = stripe.checkout.Session.retrieve(
+    #     "cs_test_a1nY8SsGNE4yP7F0OI7skSKtc5ImzuHC6mQu7e1Hlh0ql1tvoEYikQTRsD")
+    #
+    # print(payment_status)
+
+    # def get(self, request, *args, **kwargs):
+    #     """Возвращает статус платежа"""
+    #     s = request.data.get("course_id")
+    #     print(s)
+
+
+
+
+        # payment_status = stripe.checkout.Session.retrieve(payment.payment_id)
+        # print(payment_status)
 
 
 class UserListAPIView(generics.ListAPIView):

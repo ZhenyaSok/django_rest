@@ -20,6 +20,8 @@ class Course(models.Model):
     owner = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, **NULLABLE, verbose_name='администратор')
     price = models.PositiveIntegerField(default=0, verbose_name="цена")
 
+    # last_update = models.DateTimeField(verbose_name='последнее обновление', auto_now=True)
+
     def __str__(self):
         return f'{self.title} {self.description}'
 
@@ -47,6 +49,7 @@ class Subject(models.Model):
 class Subscribe(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, verbose_name='пользователь')
     course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name='курс')
+    status_subscribe = models.BooleanField(default=False, verbose_name='статус подписки', **NULLABLE)
 
 
     def __str__(self):

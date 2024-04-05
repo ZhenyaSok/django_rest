@@ -8,12 +8,8 @@ from lms.models import Course, Subject, Subscribe
 from lms.pagination import PagePagination
 from lms.permissions import IsModerator, IsOwner
 from lms.serializers import SubjectSerializer, CourseSerializer
+from lms.tasks import send_mail_sub
 
-
-
-# class SubscribeViewSet(ModelViewSet):
-#     serializer_class = SubscribeSerializer
-#     queryset = Subscribe.objects.all()
 
 class SubscribeAPIView(APIView):
     """Механизм для смены флага подписки на курс"""
@@ -28,12 +24,16 @@ class SubscribeAPIView(APIView):
 
         if subs_item.exists():
             subs_item.delete()
+            subs_item.status_subscribe = False
             message = "Подписка удалена"
+
         else:
             Subscribe.objects.create(user=user, course=course_item)
+            subs_item.status_subscribe = True
             message = "Подписка добавлена"
 
         return Response({"message": message}, status=status.HTTP_200_OK)
+
 
 class CourseViewSet(ModelViewSet):
     serializer_class = CourseSerializer
@@ -55,6 +55,12 @@ class CourseViewSet(ModelViewSet):
         new_course = serializer.save()
         new_course.owner = self.request.user
         new_course.save()
+
+    def perform_update(self, serializer):
+        update_course = serializer.save()
+        print(f'ПРивет {update_course.id}')
+        send_mail_sub.delay(update_course.id)
+        update_course.save()
 
 class SubjectCreateApiView(generics.CreateAPIView):
     serializer_class = SubjectSerializer

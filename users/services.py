@@ -1,7 +1,8 @@
 from django.core.mail import send_mail
 from django.conf import settings
-
 import stripe
+
+
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 def create_stripe_price(payment):
@@ -28,7 +29,12 @@ def create_stripe_session(stripe_price_id):
         mode='payment',
     )
 
-    return stripe_session['url']
+    return stripe_session['url'], stripe_session['id']
+
+def get_status_payment(stripe_id) -> dict:
+    """ return session from stripe API"""
+
+    return stripe.checkout.Session.retrieve(stripe_id)
 
 
 def send_mail_password(new_password, email):
@@ -45,3 +51,5 @@ def send_mail_ready(email, current_site, activation_url):
                 from_email=settings.EMAIL_HOST_USER,
                 recipient_list=[email]
             )
+
+
