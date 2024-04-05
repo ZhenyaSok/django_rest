@@ -1,14 +1,17 @@
-
+from rest_framework.generics import get_object_or_404
+from rest_framework.response import Response
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import generics, serializers
+from rest_framework import generics, serializers, viewsets
 from rest_framework.filters import OrderingFilter
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework.viewsets import ModelViewSet
+
 from config import settings
 from users.models import User, Payment
 import stripe
 from lms.permissions import IsOwner, IsModerator
 from users.serializers import PaymentSerializer, UserSerializer
-from users.services import create_stripe_price, create_stripe_session
+from users.services import create_stripe_price, create_stripe_session, get_status_payment
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -29,7 +32,6 @@ class PaymentCreateAPIView(generics.CreateAPIView):
 
     def perform_create(self, serializer):
         course = serializer.validated_data.get('paid_course')
-        print(course)
 
         if not course:
             raise serializers.ValidationError('Укажите курс')
@@ -39,28 +41,47 @@ class PaymentCreateAPIView(generics.CreateAPIView):
             raise serializers.ValidationError('Укажите верную цену, должна совпадать с ценой на сайте')
 
         stripe_price_id = create_stripe_price(payment)
-        payment.payment_link = create_stripe_session(stripe_price_id)
+        payment.payment_link, payment.payment_id = create_stripe_session(stripe_price_id)
+
+        get_status_payment(payment.payment_id)
 
         payment.save()
 
 
+class StatusViewSet(ModelViewSet):
+    queryset = Payment.objects.all()
 
-#     def post(self, request, *args, **kwargs):
-#         super(PaymentCreateAPIView, self).post(request, *args, **kwargs)
-#         checkout_session = stripe.checkout.Session.create(
-#             line_items=[
-#                 {
-#                     # Provide the exact Price ID (for example, pr_1234) of the product you want to sell
-#                     'price': 'price_1OzDyORoEJdjRqgtewTvrPqW',
-#                     'quantity': 1,
-#                 },
-#             ],
-#             mode='payment',
-#             success_url=settings.DOMAIN_NAME,
-#             cancel_url='http://127.0.0.1:8000/payment/'
-# ,
-#         )
-#         return HTTPResponseRedirect(checkout_session.url, status=HTTPStatus.SEE_OTHER)
+
+    def retrieve(self, request, pk):
+
+        instance = pk
+        serializer = PaymentSerializer(instance)
+        return Response(serializer.data)
+        # Метод для вывода информации по пользователю с определением выборки из базы и указанием сериализатора
+        # queryset = Payment.objects.all()
+        # payment_pk = stripe.checkout.Session.retrieve(queryset, pk=pk)
+        # payment = get_object_or_404(queryset, pk=pk)
+
+        # return Response(serializer.data)
+
+
+
+
+    # payment_status = stripe.checkout.Session.retrieve(
+    #     "cs_test_a1nY8SsGNE4yP7F0OI7skSKtc5ImzuHC6mQu7e1Hlh0ql1tvoEYikQTRsD")
+    #
+    # print(payment_status)
+
+    # def get(self, request, *args, **kwargs):
+    #     """Возвращает статус платежа"""
+    #     s = request.data.get("course_id")
+    #     print(s)
+
+
+
+
+        # payment_status = stripe.checkout.Session.retrieve(payment.payment_id)
+        # print(payment_status)
 
 
 class UserListAPIView(generics.ListAPIView):

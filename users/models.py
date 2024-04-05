@@ -3,12 +3,9 @@ from django.db import models
 
 from lms.models import Course, Subject
 
-NULLABLE = {'null':True, 'blank':True}
+NULLABLE = {'null': True, 'blank': True}
 
-'''
-Пользователь: все поля от обычного пользователя, 
-но авторизацию заменить на email; телефон; город; аватарка. 
-Модель пользователя разместите в приложении users'''
+
 class User(AbstractUser):
     """Модель пользователя"""
     username = None
@@ -18,6 +15,8 @@ class User(AbstractUser):
     phone = models.CharField(max_length=35, verbose_name='номер телефона', **NULLABLE)
     avatar = models.ImageField(upload_to='users/', verbose_name='аватар', **NULLABLE)
     city = models.CharField(max_length=50, verbose_name='город', **NULLABLE)
+    is_active = models.BooleanField(default=False, **NULLABLE)
+    last_login = models.DateTimeField(auto_now_add=True, verbose_name='время последнего посещения', **NULLABLE)
 
     email_verify = models.BooleanField(default=False, verbose_name='проверка почты')
 

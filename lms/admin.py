@@ -1,5 +1,5 @@
 from django.contrib import admin
-from lms.models import Subject, Course
+from lms.models import Subject, Course, Subscribe
 from users.models import Payment
 
 
@@ -14,10 +14,16 @@ class CourseListSettingsAdmin(admin.ModelAdmin):
     # list_filter = ('title', 'course')
     list_display = ('pk', 'title', 'description', 'owner')
 
+
+@admin.register(Subscribe)
+class SubscribeAdmin(admin.ModelAdmin):
+    # list_filter = ('title', 'course')
+    list_display = ('pk', 'user', 'course', 'status_subscribe')
+
 @admin.register(Payment)
 class PaymentAdmin(admin.ModelAdmin):
     """Отображение списка платежей"""
-    list_display = ('user_pay', 'date_pay', 'paid_course', 'paid_subject')
+    list_display = ('id', 'user_pay', 'date_pay', 'payment_id', 'paid_course', 'paid_subject')
 
 
 

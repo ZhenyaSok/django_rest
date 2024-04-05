@@ -14,20 +14,24 @@ class SubjectSerializer(serializers.ModelSerializer):
 class SubscribeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Subscribe
-        fields = ('id', 'user', 'course')
+        fields = ('id', 'user', 'course', 'status_subscribe')
 
 
 class CourseSerializer(serializers.ModelSerializer):
     quantity_subject = serializers.SerializerMethodField()
     list_subject = serializers.SerializerMethodField()
     is_subscription = serializers.SerializerMethodField()
+    # status_payment = serializers.SerializerMethodField()
+
+
 
     def get_is_subscription(self, course):
         user = self.context['request'].user
-        subscription = Subscribe.objects.filter(course=course.id, user=user.id)
+        subscription = Subscribe.objects.filter(course=course, user=user).first()
         if subscription:
-            return True
+            return subscription.status_subscribe
         return False
+
 
     def get_quantity_subject(self, course):
         """Метод для подсчета количества уроков, входящих в курс"""
